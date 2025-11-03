@@ -1,0 +1,133 @@
+/* ===================== Variables ===================== */
+:root {
+  --text-light: #ffffff;
+  --primary-blue: #5263b8;
+  --accent-orange: #ff7f32;
+  --bg-dark: rgba(0, 0, 30, 0.7);
+  --bg-dark-tasks: rgba(0, 0, 30, 0.6);
+}
+
+/* ===================== Container ===================== */
+.pmt-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: var(--text-light);
+  padding-top: 80px;
+}
+
+/* ===================== Title ===================== */
+.pmt-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* ===================== Upload Input ===================== */
+.pmt-container input[type="file"] {
+  display: block;
+  margin: 0 auto 2rem auto;
+  padding: 0.5rem 1rem;
+  background: var(--primary-blue);
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.pmt-container input[type="file"]:hover {
+  background: var(--accent-orange);
+}
+
+/* ===================== PMT Content ===================== */
+.pmt-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ===================== Calendar ===================== */
+.react-calendar {
+  height: auto;
+  max-width: 100%;
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--bg-dark);
+  border: none;
+}
+
+.react-calendar__tile {
+  color: var(--text-light);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.react-calendar__tile:hover {
+  background: var(--primary-blue);
+  color: var(--text-light);
+}
+
+.react-calendar__tile--active {
+  background: var(--accent-orange);
+  color: var(--text-light);
+}
+
+.react-calendar__tile--now {
+  border: 2px solid var(--accent-orange);
+  color: var(--text-light);
+}
+
+.react-calendar__tile--has-tasks {
+  background: rgba(82, 99, 184, 0.6);
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+/* ===================== PMT Tasks ===================== */
+.pmt-tasks {
+  flex: 1;
+  background: var(--bg-dark-tasks);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.pmt-tasks h2 {
+  color: var(--primary-blue);
+  margin-bottom: 1rem;
+}
+
+.pmt-tasks ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pmt-tasks li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 127, 50, 0.3);
+  font-weight: 500;
+}
+
+.pmt-tasks p {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===================== Desktop Layout ===================== */
+@media (min-width: 768px) {
+  .pmt-content {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .react-calendar,
+  .pmt-tasks {
+    flex: 0 0 48%;
+  }
+}
