@@ -68,38 +68,61 @@ export default function PMTSchedule() {
   
   // Handle Excel upload
   const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      const data = new Uint8Array(evt.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(sheet);
+  const reader = new FileReader();
+  reader.onload = async (evt) => {
+    const data = new Uint8Array(evt.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet);
 
-      const rows = [];
-      json.forEach((row) => {
-        if (!row.Date || !row.Game) return;
-        const dateStr =
-          typeof row.Date === 'number' ? excelDateToJSDate(row.Date) : row.Date;
-        rows.push({ date: dateStr, game: row.Game.trim() });
-      });
+    const rows = [];
+    json.forEach((row) => {
+      if (!row.Date || !row.Game) return;
+      const dateStr =
+        typeof row.Date === 'number' ? excelDateToJSDate(row.Date) : row.Date;
+      rows.push({ date: dateStr, game: row.Game.trim() });
+    });
 
-      // Insert into Supabase
-      const { error } = await supabase.from('PMT').insert(rows);
+    if (rows.length === 0) {
+      alert('No valid PMTs found in the file.');
+      return;
+    }
 
-      if (error) {
-        console.error(error);
-        alert('Upload failed.');
-      } else {
-        alert('PMTs uploaded successfully!');
-        fetchPMTs();
+    try {
+      // 🔹 Delete all existing PMTs
+      const { error: deleteError } = await supabase
+        .from('PMT')
+        .delete()
+        .neq('id', 0); // assumes no row has id = 0
+
+      if (deleteError) {
+        console.error('Error deleting PMTs:', deleteError);
+        alert('Failed to clear existing PMTs.');
+        return;
       }
-    };
 
-    reader.readAsArrayBuffer(file);
+      // 🔹 Insert new rows
+      const { error: insertError } = await supabase.from('PMT').insert(rows);
+      if (insertError) {
+        console.error('Error inserting PMTs:', insertError);
+        alert('Upload failed.');
+        return;
+      }
+
+      alert('PMTs uploaded successfully!');
+      fetchPMTs(); // Refresh calendar
+    } catch (err) {
+      console.error(err);
+      alert('An unexpected error occurred.');
+    }
   };
+
+  reader.readAsArrayBuffer(file);
+};
+
 
   const formatDate = (date) => date.toISOString().split('T')[0];
   const tasks = pmtByDate[formatDate(selectedDate)] || [];
